@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 对于注册页面，完全跳过认证检查和初始化
     if (currentPage === 'register.html') {
-        console.log('注册页面 - 跳过所有认证检查');
+        console.log('注册页面 - 跳过所有认证检查和初始化逻辑');
         
         // 只绑定注册表单事件
         const registerForm = document.getElementById('registerForm');
@@ -292,7 +292,8 @@ document.addEventListener('DOMContentLoaded', function() {
             registerForm.addEventListener('submit', handleRegister);
         }
         
-        // 注册页面不执行任何其他初始化逻辑
+        // 完全阻止任何认证相关的初始化
+        // 确保不会调用initializePage()和其他可能的重定向逻辑
         return;
     }
     

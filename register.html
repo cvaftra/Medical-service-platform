@@ -267,22 +267,37 @@
   <script src="script.js"></script>
   
   <script>
-    // 注册页面特定的初始化逻辑
+    // 注册页面特定的初始化逻辑 - 完全隔离认证检查
     document.addEventListener('DOMContentLoaded', function() {
-      // 注册页面不需要认证检查，允许未登录用户注册
-      console.log('注册页面初始化完成');
+      console.log('注册页面初始化 - 跳过所有认证逻辑');
+      
+      // 完全阻止任何可能的认证重定向
+      window.AuthService = window.AuthService || {};
+      window.AuthService.isLoggedIn = function() {
+        console.log('注册页面：跳过登录状态检查');
+        return false; // 强制返回false，避免任何重定向
+      };
+      
+      // 重写checkAuth函数
+      window.checkAuth = function() {
+        console.log('注册页面：跳过认证检查');
+        return true; // 返回true，不进行任何重定向
+      };
       
       // 绑定注册表单提交事件
       const registerForm = document.getElementById('registerForm');
       if (registerForm) {
-        console.log('找到注册表单，绑定事件处理');
+        console.log('绑定注册表单事件');
         registerForm.addEventListener('submit', handleRegister);
       }
       
-      // 如果用户已登录，显示提示信息（但仍然允许注册）
-      if (AuthService && AuthService.isLoggedIn()) {
-        console.log('用户已登录，但仍允许注册新账户');
-      }
+      // 确保页面不会被重定向
+      setTimeout(function() {
+        console.log('注册页面稳定性检查完成');
+        if (window.location.href.includes('register.html')) {
+          console.log('注册页面保持稳定，无重定向');
+        }
+      }, 100);
     });
     
     // 密码强度检测

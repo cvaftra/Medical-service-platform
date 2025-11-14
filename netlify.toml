@@ -2,7 +2,7 @@
   publish = "."
   command = "echo 'No build command needed for static site'"
 
-# 使用简单的重定向而不是SPA路由
+# 修复注册页面跳转问题的重定向规则
 [[redirects]]
   from = "/"
   to = "/login.html"
@@ -14,8 +14,8 @@
   status = 200
 
 [[redirects]]
-  from = "/register/*"
-  to = "/register.html"
+  from = "/login"
+  to = "/login.html"
   status = 200
 
 [[redirects]]
@@ -33,8 +33,8 @@
   to = "/settings.html"
   status = 200
 
-# 其他所有路径显示404
+# 所有其他路径都重定向到index.html（SPA模式）
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 404
+  status = 200
