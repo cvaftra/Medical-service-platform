@@ -294,7 +294,8 @@
       // 确保页面不会被重定向
       setTimeout(function() {
         console.log('注册页面稳定性检查完成');
-        if (window.location.href.includes('register.html')) {
+        const pageName = window.getCurrentPage ? window.getCurrentPage() : window.location.pathname.split('/').pop();
+        if ((pageName || '').includes('register')) {
           console.log('注册页面保持稳定，无重定向');
         }
       }, 100);

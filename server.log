@@ -12,3 +12,5 @@
 {"level":30,"time":1762840926055,"pid":28312,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
 {"level":30,"time":1763108821942,"pid":27208,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
 {"level":30,"time":1763108821942,"pid":27208,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1763111487968,"pid":27408,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1763111487969,"pid":27408,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}

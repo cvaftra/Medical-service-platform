@@ -5,11 +5,19 @@ function navigateTo(page) {
     window.location.href = page;
 }
 
+// 统一获取当前页面名称，兼容Netlify路径重写（如 /register -> register.html）
+function getCurrentPage() {
+    const path = window.location.pathname.replace(/\/+$/, '');
+    const lastSegment = path.split('/').pop() || 'index.html';
+    const hasExtension = lastSegment.includes('.');
+    return (hasExtension ? lastSegment : `${lastSegment}.html`).toLowerCase();
+}
+
 // 检查登录状态并重定向
 function checkAuth() {
     // 使用AuthService检查登录状态（包含占位符检查）
     const isLoggedIn = AuthService.isLoggedIn();
-    const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = getCurrentPage();
     
     // 对于注册页面，不需要重定向检查
     if (currentPage === 'register.html') {
@@ -33,7 +41,7 @@ function checkAuth() {
 
 // 初始化页面
 function initializePage() {
-    const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = getCurrentPage();
     
     // 对于注册页面，不进行认证检查（双重保护）
     if (currentPage === 'register.html') {
@@ -279,7 +287,7 @@ async function loadStatistics() {
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
-    const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = getCurrentPage();
     
     // 对于注册页面，完全跳过认证检查和初始化
     if (currentPage === 'register.html') {
@@ -351,3 +359,4 @@ window.checkAuth = checkAuth;
 window.logout = logout;
 window.showMessage = showMessage;
 window.formatDate = formatDate;
+window.getCurrentPage = getCurrentPage;
