@@ -265,64 +265,91 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
   <script src="script.js"></script>
+  
   <script>
-    // 密码强度检测
-    document.getElementById('password').addEventListener('input', function() {
-      const password = this.value;
-      const strengthBar = document.getElementById('password-strength');
-      const strengthHint = document.getElementById('password-hint');
+    // 注册页面特定的初始化逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+      // 注册页面不需要认证检查，允许未登录用户注册
+      console.log('注册页面初始化完成');
       
-      if (password.length === 0) {
-        strengthBar.classList.add('hidden');
-        strengthHint.classList.add('hidden');
-        return;
+      // 绑定注册表单提交事件
+      const registerForm = document.getElementById('registerForm');
+      if (registerForm) {
+        console.log('找到注册表单，绑定事件处理');
+        registerForm.addEventListener('submit', handleRegister);
       }
       
-      strengthBar.classList.remove('hidden');
-      strengthHint.classList.remove('hidden');
-      
-      // 密码强度计算逻辑
-      let strength = 0;
-      if (password.length >= 8) strength++;
-      if (/[a-z]/.test(password)) strength++;
-      if (/[A-Z]/.test(password)) strength++;
-      if (/[0-9]/.test(password)) strength++;
-      if (/[^a-zA-Z0-9]/.test(password)) strength++;
-      
-      // 更新样式
-      strengthBar.className = 'password-strength';
-      strengthHint.textContent = '密码强度：';
-      
-      if (strength <= 2) {
-        strengthBar.classList.add('strength-weak');
-        strengthHint.textContent += '弱';
-      } else if (strength === 3) {
-        strengthBar.classList.add('strength-medium');
-        strengthHint.textContent += '中等';
-      } else if (strength === 4) {
-        strengthBar.classList.add('strength-strong');
-        strengthHint.textContent += '强';
-      } else {
-        strengthBar.classList.add('strength-very-strong');
-        strengthHint.textContent += '很强';
+      // 如果用户已登录，显示提示信息（但仍然允许注册）
+      if (AuthService && AuthService.isLoggedIn()) {
+        console.log('用户已登录，但仍允许注册新账户');
       }
     });
     
-    // 密码确认验证
-    document.getElementById('confirmPassword').addEventListener('input', function() {
-      const password = document.getElementById('password').value;
-      const confirmPassword = this.value;
-      const matchHint = document.getElementById('password-match');
-      
-      if (confirmPassword.length === 0) {
-        matchHint.classList.add('hidden');
-        return;
+    // 密码强度检测
+    document.addEventListener('DOMContentLoaded', function() {
+      const passwordInput = document.getElementById('password');
+      if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+          const password = this.value;
+          const strengthBar = document.getElementById('password-strength');
+          const strengthHint = document.getElementById('password-hint');
+          
+          if (password.length === 0) {
+            strengthBar.classList.add('hidden');
+            strengthHint.classList.add('hidden');
+            return;
+          }
+          
+          strengthBar.classList.remove('hidden');
+          strengthHint.classList.remove('hidden');
+          
+          // 密码强度计算逻辑
+          let strength = 0;
+          if (password.length >= 8) strength++;
+          if (/[a-z]/.test(password)) strength++;
+          if (/[A-Z]/.test(password)) strength++;
+          if (/[0-9]/.test(password)) strength++;
+          if (/[^a-zA-Z0-9]/.test(password)) strength++;
+          
+          // 更新样式
+          strengthBar.className = 'password-strength';
+          strengthHint.textContent = '密码强度：';
+          
+          if (strength <= 2) {
+            strengthBar.classList.add('strength-weak');
+            strengthHint.textContent += '弱';
+          } else if (strength === 3) {
+            strengthBar.classList.add('strength-medium');
+            strengthHint.textContent += '中等';
+          } else if (strength === 4) {
+            strengthBar.classList.add('strength-strong');
+            strengthHint.textContent += '强';
+          } else {
+            strengthBar.classList.add('strength-very-strong');
+            strengthHint.textContent += '很强';
+          }
+        });
       }
       
-      if (password !== confirmPassword) {
-        matchHint.classList.remove('hidden');
-      } else {
-        matchHint.classList.add('hidden');
+      // 密码确认验证
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      if (confirmPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+          const password = document.getElementById('password').value;
+          const confirmPassword = this.value;
+          const matchHint = document.getElementById('password-match');
+          
+          if (confirmPassword.length === 0) {
+            matchHint.classList.add('hidden');
+            return;
+          }
+          
+          if (password !== confirmPassword) {
+            matchHint.classList.remove('hidden');
+          } else {
+            matchHint.classList.add('hidden');
+          }
+        });
       }
     });
   </script>
