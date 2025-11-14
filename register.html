@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户注册 - 医疗平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#10B981'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '2px',
+            DEFAULT: '4px',
+            'md': '8px',
+            'lg': '12px',
+            'xl': '16px',
+            '2xl': '20px',
+            '3xl': '24px',
+            'full': '9999px',
+            'button': '4px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 1024px;
+      background-color: #F9FAFB;
+    }
+    
+    .font-logo {
+      font-family: 'Pacifico', serif;
+    }
+    
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
+    .social-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .form-input {
+      border: 1px solid #D1D5DB;
+      transition: border-color 0.2s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    .register-btn {
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+    }
+    
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+    
+    .strength-weak { background-color: #EF4444; width: 25%; }
+    .strength-medium { background-color: #F59E0B; width: 50%; }
+    .strength-strong { background-color: #10B981; width: 75%; }
+    .strength-very-strong { background-color: #10B981; width: 100%; }
+  </style>
+</head>
+<body class="flex min-h-screen">
+  <!-- 右侧注册区域 -->
+  <div class="w-full flex items-center justify-center p-12 bg-white">
+    <div class="w-full max-w-md">
+      <!-- 品牌标识 -->
+      <div class="text-center mb-12">
+        <h1 class="font-logo text-4xl text-primary mb-2">logo</h1>
+        <p class="text-gray-600">专业医疗服务平台</p>
+      </div>
+
+      <!-- 注册表单 -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">创建账户</h2>
+        <p class="text-gray-600 mb-8">请填写您的注册信息</p>
+
+        <!-- 注册信息输入 -->
+        <form class="space-y-6" id="registerForm" onsubmit="handleRegister(event)">
+          <!-- 用户名 -->
+          <div>
+            <label for="fullname" class="block text-sm font-medium text-gray-700 mb-2">用户名</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-user text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="text" 
+                id="fullname" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg" 
+                placeholder="请输入您的用户名"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- 邮箱地址 -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">邮箱地址</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="email" 
+                id="email" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg" 
+                placeholder="请输入您的邮箱"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- 手机号码 -->
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">手机号码</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-phone text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="tel" 
+                id="phone" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg" 
+                placeholder="请输入您的手机号码"
+                required
+              >
+            </div>
+          </div>
+
+          <!-- 密码 -->
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">密码</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="password" 
+                id="password" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg" 
+                placeholder="请输入密码（至少8位）"
+                minlength="8"
+                required
+              >
+            </div>
+            <div id="password-strength" class="password-strength hidden"></div>
+            <p id="password-hint" class="text-xs text-gray-500 mt-1 hidden">密码强度：弱</p>
+          </div>
+
+          <!-- 确认密码 -->
+          <div>
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">确认密码</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="password" 
+                id="confirmPassword" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg" 
+                placeholder="请再次输入密码"
+                required
+              >
+            </div>
+            <p id="password-match" class="text-xs text-red-500 mt-1 hidden">密码不匹配</p>
+          </div>
+          
+          <!-- 用户角色（固定为普通用户） -->
+          <div>
+            <label for="role" class="block text-sm font-medium text-gray-700 mb-2">用户角色</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-user-tag text-gray-400 w-5 h-5 flex items-center justify-center"></i>
+              </div>
+              <input 
+                type="text" 
+                id="role" 
+                class="form-input w-full pl-10 pr-4 py-3 rounded-lg bg-gray-100" 
+                value="普通用户"
+                readonly
+                disabled
+              >
+            </div>
+            <p class="text-xs text-gray-500 mt-1">* 所有新注册用户默认为普通用户</p>
+          </div>
+
+          <!-- 条款同意 -->
+          <div class="flex items-center">
+            <input 
+              id="terms" 
+              name="terms" 
+              type="checkbox" 
+              class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary"
+              required
+            >
+            <label for="terms" class="ml-2 block text-sm text-gray-700">
+              我已阅读并同意 <a href="#" class="text-primary hover:underline">服务条款</a> 和 <a href="#" class="text-primary hover:underline">隐私政策</a>
+            </label>
+          </div>
+
+          <button type="submit" class="register-btn w-full py-3 px-4 rounded-button text-white font-medium whitespace-nowrap">
+            注册账户
+          </button>
+        </form>
+
+        <!-- 登录链接 -->
+        <div class="mt-8 text-center">
+          <p class="text-gray-600">
+            已有账户？
+            <a href="login.html" class="font-medium text-primary hover:underline">立即登录</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- 底部信息 -->
+      <div class="mt-12 text-center text-sm text-gray-500">
+        <p>© 2023 医疗平台. 保留所有权利.</p>
+        <div class="mt-2 flex justify-center space-x-6">
+          <a href="#" class="hover:text-primary">隐私政策</a>
+          <a href="#" class="hover:text-primary">服务条款</a>
+          <a href="#" class="hover:text-primary">联系我们</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // 密码强度检测
+    document.getElementById('password').addEventListener('input', function() {
+      const password = this.value;
+      const strengthBar = document.getElementById('password-strength');
+      const strengthHint = document.getElementById('password-hint');
+      
+      if (password.length === 0) {
+        strengthBar.classList.add('hidden');
+        strengthHint.classList.add('hidden');
+        return;
+      }
+      
+      strengthBar.classList.remove('hidden');
+      strengthHint.classList.remove('hidden');
+      
+      // 密码强度计算逻辑
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (/[a-z]/.test(password)) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^a-zA-Z0-9]/.test(password)) strength++;
+      
+      // 更新样式
+      strengthBar.className = 'password-strength';
+      strengthHint.textContent = '密码强度：';
+      
+      if (strength <= 2) {
+        strengthBar.classList.add('strength-weak');
+        strengthHint.textContent += '弱';
+      } else if (strength === 3) {
+        strengthBar.classList.add('strength-medium');
+        strengthHint.textContent += '中等';
+      } else if (strength === 4) {
+        strengthBar.classList.add('strength-strong');
+        strengthHint.textContent += '强';
+      } else {
+        strengthBar.classList.add('strength-very-strong');
+        strengthHint.textContent += '很强';
+      }
+    });
+    
+    // 密码确认验证
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = this.value;
+      const matchHint = document.getElementById('password-match');
+      
+      if (confirmPassword.length === 0) {
+        matchHint.classList.add('hidden');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        matchHint.classList.remove('hidden');
+      } else {
+        matchHint.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

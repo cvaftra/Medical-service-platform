@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户管理 - 医疗平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#10B981'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '2px',
+            DEFAULT: '4px',
+            'md': '8px',
+            'lg': '12px',
+            'xl': '16px',
+            '2xl': '20px',
+            '3xl': '24px',
+            'full': '9999px',
+            'button': '4px'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container mx-auto flex items-center justify-between py-4">
+      <div class="flex items-center space-x-8">
+        <a href="dashboard.html" class="navbar-brand">logo</a>
+        <div class="hidden md:flex space-x-4">
+          <a href="dashboard.html" class="nav-link">控制台</a>
+          <a href="users.html" class="nav-link active">用户管理</a>
+          <a href="settings.html" class="nav-link">系统设置</a>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600" id="userName">管理员</span>
+        <button onclick="logout()" class="btn-secondary">
+          <i class="fas fa-sign-out-alt mr-2"></i>退出
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container mx-auto py-8">
+    <!-- 页面标题和操作 -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">用户管理</h1>
+        <p class="text-gray-600">管理平台用户账户和权限</p>
+      </div>
+      <button onclick="openAddUserModal()" id="addUserBtn" class="btn-primary hidden">
+        <i class="fas fa-plus mr-2"></i>添加用户
+      </button>
+    </div>
+    
+    <!-- 权限提示 -->
+    <div id="permissionAlert" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 hidden">
+      <div class="flex items-center">
+        <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+        <div>
+          <h4 class="font-medium text-yellow-800">权限提示</h4>
+          <p class="text-yellow-700 text-sm">您当前为普通用户，只能查看用户信息，无法进行管理操作。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 搜索和筛选 -->
+    <div class="card mb-6">
+      <div class="card-body">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+              <input 
+                type="text" 
+                id="searchInput"
+                class="form-input w-full pl-10 pr-4 py-2 rounded-lg" 
+                placeholder="搜索用户..."
+                onkeyup="searchUsers()"
+              >
+            </div>
+          </div>
+          <div class="flex space-x-4">
+            <select id="statusFilter" class="form-input py-2 rounded-lg" onchange="filterUsers()">
+              <option value="">所有状态</option>
+              <option value="active">活跃</option>
+              <option value="inactive">非活跃</option>
+            </select>
+            <button onclick="resetFilters()" class="btn-secondary">重置</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用户列表 -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="text-lg font-semibold text-gray-900">用户列表</h3>
+      </div>
+      <div class="card-body">
+        <div class="overflow-x-auto">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>邮箱</th>
+                <th>角色</th>
+                <th>状态</th>
+                <th>注册时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable">
+              <tr>
+                <td colspan="7" class="text-center py-8 text-gray-500">
+                  <i class="fas fa-spinner fa-spin text-2xl mb-2 block"></i>
+                  加载中...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="flex justify-between items-center mt-6" id="pagination">
+          <div class="text-sm text-gray-600">
+            显示 <span id="startCount">0</span>-<span id="endCount">0</span> 条，共 <span id="totalCount">0</span> 条
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="changePage(-1)" class="btn-secondary" disabled id="prevBtn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="changePage(1)" class="btn-secondary" disabled id="nextBtn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 添加/编辑用户模态框 -->
+  <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold" id="modalTitle">添加用户</h3>
+        <button onclick="closeUserModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="userForm" onsubmit="handleUserSubmit(event)">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+            <input type="text" id="userName" class="form-input w-full p-2 rounded-lg" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+            <input type="email" id="userEmail" class="form-input w-full p-2 rounded-lg" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">角色</label>
+            <select id="userRole" class="form-input w-full p-2 rounded-lg" required>
+              <option value="user">普通用户</option>
+              <option value="admin">管理员</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">状态</label>
+            <select id="userStatus" class="form-input w-full p-2 rounded-lg" required>
+              <option value="active">活跃</option>
+              <option value="inactive">非活跃</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button" onclick="closeUserModal()" class="btn-secondary">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="supabase.js"></script>
+  <script>
+    let currentUsers = [];
+    let filteredUsers = [];
+    let currentPage = 1;
+    const usersPerPage = 10;
+    let editingUserId = null;
+
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查用户登录状态
+      if (!AuthService.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // 设置用户信息并检查权限
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        document.getElementById('userName').textContent = user.email || (user.role === 'admin' ? '管理员' : '普通用户');
+        
+        // 根据用户角色显示/隐藏操作权限
+        if (user.role === 'admin') {
+          // 管理员权限：显示所有操作按钮
+          document.getElementById('addUserBtn').classList.remove('hidden');
+          document.getElementById('permissionAlert').classList.add('hidden');
+        } else {
+          // 普通用户权限：隐藏操作按钮，显示提示
+          document.getElementById('addUserBtn').classList.add('hidden');
+          document.getElementById('permissionAlert').classList.remove('hidden');
+        }
+      }
+      
+      // 加载用户列表
+      loadUsers();
+    });
+    
+    // 加载用户列表
+    async function loadUsers() {
+      try {
+        const result = await DataService.getUsers();
+        if (result.success) {
+          currentUsers = result.data || [];
+          filteredUsers = [...currentUsers];
+          renderUsersTable();
+          updatePagination();
+        } else {
+          // 如果没有数据，显示示例数据
+          showSampleData();
+        }
+      } catch (error) {
+        console.error('加载用户列表失败:', error);
+        showSampleData();
+      }
+    }
+    
+    // 显示示例数据（当Supabase未配置时）
+    function showSampleData() {
+      currentUsers = [
+        {
+          id: 1,
+          name: '张三',
+          email: 'zhangsan@example.com',
+          role: 'user',
+          status: 'active',
+          created_at: '2024-01-15T10:30:00Z'
+        },
+        {
+          id: 2,
+          name: '李四',
+          email: 'lisi@example.com',
+          role: 'admin',
+          status: 'active',
+          created_at: '2024-01-14T14:20:00Z'
+        },
+        {
+          id: 3,
+          name: '王五',
+          email: 'wangwu@example.com',
+          role: 'user',
+          status: 'inactive',
+          created_at: '2024-01-13T09:15:00Z'
+        }
+      ];
+      filteredUsers = [...currentUsers];
+      renderUsersTable();
+      updatePagination();
+      
+      Utils.showMessage('使用示例数据，请配置Supabase连接', 'info');
+    }
+    
+    // 渲染用户表格
+    function renderUsersTable() {
+      const tableBody = document.getElementById('usersTable');
+      const startIndex = (currentPage - 1) * usersPerPage;
+      const endIndex = Math.min(startIndex + usersPerPage, filteredUsers.length);
+      const usersToShow = filteredUsers.slice(startIndex, endIndex);
+      const currentUser = AuthService.getCurrentUser();
+      const isAdmin = currentUser && currentUser.role === 'admin';
+      
+      if (usersToShow.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-8 text-gray-500">
+              <i class="fas fa-inbox text-2xl mb-2 block"></i>
+              暂无数据
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      tableBody.innerHTML = usersToShow.map(user => `
+        <tr class="hover:bg-gray-50">
+          <td class="font-mono text-sm">${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+            }">
+              ${user.role === 'admin' ? '管理员' : '普通用户'}
+            </span>
+          </td>
+          <td>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            }">
+              ${user.status === 'active' ? '活跃' : '非活跃'}
+            </span>
+          </td>
+          <td>${Utils.formatDate(user.created_at)}</td>
+          <td>
+            <div class="flex space-x-2" id="userActions-${user.id}">
+              ${isAdmin ? `
+                <button onclick="editUser('${user.id}')" class="text-blue-600 hover:text-blue-800">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteUser('${user.id}')" class="text-red-600 hover:text-red-800">
+                  <i class="fas fa-trash"></i>
+                </button>
+              ` : `
+                <span class="text-gray-400 text-sm">只读</span>
+              `}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+    
+    // 更新分页信息
+    function updatePagination() {
+      const startCount = (currentPage - 1) * usersPerPage + 1;
+      const endCount = Math.min(currentPage * usersPerPage, filteredUsers.length);
+      const totalCount = filteredUsers.length;
+      
+      document.getElementById('startCount').textContent = startCount;
+      document.getElementById('endCount').textContent = endCount;
+      document.getElementById('totalCount').textContent = totalCount;
+      
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage * usersPerPage >= totalCount;
+    }
+    
+    // 搜索用户
+    function searchUsers() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      
+      filterUsers(searchTerm, statusFilter);
+    }
+    
+    // 筛选用户
+    function filterUsers(searchTerm = '', statusFilter = '') {
+      filteredUsers = currentUsers.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(searchTerm) || 
+                            user.email.toLowerCase().includes(searchTerm);
+        const matchesStatus = !statusFilter || user.status === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+      });
+      
+      currentPage = 1;
+      renderUsersTable();
+      updatePagination();
+    }
+    
+    // 重置筛选
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('statusFilter').value = '';
+      filterUsers();
+    }
+    
+    // 切换页面
+    function changePage(direction) {
+      const newPage = currentPage + direction;
+      const maxPage = Math.ceil(filteredUsers.length / usersPerPage);
+      
+      if (newPage >= 1 && newPage <= maxPage) {
+        currentPage = newPage;
+        renderUsersTable();
+        updatePagination();
+      }
+    }
+    
+    // 打开添加用户模态框
+    function openAddUserModal() {
+      editingUserId = null;
+      document.getElementById('modalTitle').textContent = '添加用户';
+      document.getElementById('userForm').reset();
+      document.getElementById('userModal').classList.remove('hidden');
+      document.getElementById('userModal').classList.add('flex');
+    }
+    
+    // 编辑用户
+    function editUser(userId) {
+      const user = currentUsers.find(u => u.id === userId);
+      if (user) {
+        editingUserId = userId;
+        document.getElementById('modalTitle').textContent = '编辑用户';
+        document.getElementById('userName').value = user.name;
+        document.getElementById('userEmail').value = user.email;
+        document.getElementById('userRole').value = user.role;
+        document.getElementById('userStatus').value = user.status;
+        document.getElementById('userModal').classList.remove('hidden');
+        document.getElementById('userModal').classList.add('flex');
+      }
+    }
+    
+    // 关闭用户模态框
+    function closeUserModal() {
+      document.getElementById('userModal').classList.add('hidden');
+      document.getElementById('userModal').classList.remove('flex');
+    }
+    
+    // 处理用户表单提交
+    async function handleUserSubmit(event) {
+      event.preventDefault();
+      
+      const userData = {
+        name: document.getElementById('userName').value,
+        email: document.getElementById('userEmail').value,
+        role: document.getElementById('userRole').value,
+        status: document.getElementById('userStatus').value,
+        created_at: new Date().toISOString()
+      };
+      
+      try {
+        if (editingUserId) {
+          // 编辑用户
+          const result = await DataService.updateUser(editingUserId, userData);
+          if (result.success) {
+            Utils.showMessage('用户更新成功', 'success');
+          }
+        } else {
+          // 添加用户
+          const result = await DataService.addUser(userData);
+          if (result.success) {
+            Utils.showMessage('用户添加成功', 'success');
+          }
+        }
+        
+        closeUserModal();
+        await loadUsers();
+      } catch (error) {
+        Utils.showMessage('操作失败: ' + error.message, 'error');
+      }
+    }
+    
+    // 删除用户
+    async function deleteUser(userId) {
+      if (confirm('确定要删除这个用户吗？此操作不可撤销。')) {
+        try {
+          const result = await DataService.deleteUser(userId);
+          if (result.success) {
+            Utils.showMessage('用户删除成功', 'success');
+            await loadUsers();
+          }
+        } catch (error) {
+          Utils.showMessage('删除失败: ' + error.message, 'error');
+        }
+      }
+    }
+    
+    // 用户登出
+    async function logout() {
+      const result = await AuthService.logout();
+      if (result.success) {
+        window.location.href = 'login.html';
+      }
+    }
+  </script>
+</body>
+</html>

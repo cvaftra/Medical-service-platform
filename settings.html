@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统设置 - 医疗平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#10B981'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '2px',
+            DEFAULT: '4px',
+            'md': '8px',
+            'lg': '12px',
+            'xl': '16px',
+            '2xl': '20px',
+            '3xl': '24px',
+            'full': '9999px',
+            'button': '4px'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container mx-auto flex items-center justify-between py-4">
+      <div class="flex items-center space-x-8">
+        <a href="dashboard.html" class="navbar-brand">logo</a>
+        <div class="hidden md:flex space-x-4">
+          <a href="dashboard.html" class="nav-link">控制台</a>
+          <a href="users.html" class="nav-link">用户管理</a>
+          <a href="settings.html" class="nav-link active">系统设置</a>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600" id="userName">管理员</span>
+        <button onclick="logout()" class="btn-secondary">
+          <i class="fas fa-sign-out-alt mr-2"></i>退出
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container mx-auto py-8">
+    <!-- 页面标题 -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">系统设置</h1>
+      <p class="text-gray-600">配置平台参数和系统选项</p>
+    </div>
+
+    <!-- 设置选项卡 -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button 
+        id="generalTab" 
+        class="tab-btn px-4 py-2 border-b-2 border-transparent hover:text-primary transition-colors"
+        onclick="showTab('general')"
+      >
+        常规设置
+      </button>
+      <button 
+        id="securityTab" 
+        class="tab-btn px-4 py-2 border-b-2 border-transparent hover:text-primary transition-colors"
+        onclick="showTab('security')"
+      >
+        安全设置
+      </button>
+      <button 
+        id="databaseTab" 
+        class="tab-btn px-4 py-2 border-b-2 border-transparent hover:text-primary transition-colors"
+        onclick="showTab('database')"
+      >
+        数据库配置
+      </button>
+    </div>
+
+    <!-- 常规设置 -->
+    <div id="generalContent" class="tab-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">平台信息</h3>
+          </div>
+          <div class="card-body space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">平台名称</label>
+              <input type="text" id="platformName" class="form-input w-full p-2 rounded-lg" value="医疗平台">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">平台描述</label>
+              <textarea id="platformDescription" class="form-input w-full p-2 rounded-lg" rows="3">专业的医疗服务平台</textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">联系电话</label>
+              <input type="tel" id="platformPhone" class="form-input w-full p-2 rounded-lg" value="400-123-4567">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">界面设置</h3>
+          </div>
+          <div class="card-body space-y-4">
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="darkMode" class="rounded border-gray-300 text-primary focus:ring-primary">
+                <span class="ml-2 text-sm text-gray-700">启用暗色模式</span>
+              </label>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">默认语言</label>
+              <select id="defaultLanguage" class="form-input w-full p-2 rounded-lg">
+                <option value="zh-CN">简体中文</option>
+                <option value="en-US">English</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">时区设置</label>
+              <select id="timezone" class="form-input w-full p-2 rounded-lg">
+                <option value="Asia/Shanghai">北京时间 (UTC+8)</option>
+                <option value="America/New_York">美国东部时间 (UTC-5)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button onclick="saveGeneralSettings()" class="btn-primary">
+          <i class="fas fa-save mr-2"></i>保存设置
+        </button>
+      </div>
+    </div>
+
+    <!-- 安全设置 -->
+    <div id="securityContent" class="tab-content hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">密码策略</h3>
+          </div>
+          <div class="card-body space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">最小密码长度</label>
+              <input type="number" id="minPasswordLength" class="form-input w-full p-2 rounded-lg" value="8" min="6" max="20">
+            </div>
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="requireUppercase" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                <span class="ml-2 text-sm text-gray-700">要求大写字母</span>
+              </label>
+            </div>
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="requireNumbers" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                <span class="ml-2 text-sm text-gray-700">要求数字</span>
+              </label>
+            </div>
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="requireSpecialChars" class="rounded border-gray-300 text-primary focus:ring-primary">
+                <span class="ml-2 text-sm text-gray-700">要求特殊字符</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">会话管理</h3>
+          </div>
+          <div class="card-body space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">会话超时时间（分钟）</label>
+              <input type="number" id="sessionTimeout" class="form-input w-full p-2 rounded-lg" value="30" min="5" max="1440">
+            </div>
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="enable2FA" class="rounded border-gray-300 text-primary focus:ring-primary">
+                <span class="ml-2 text-sm text-gray-700">启用双因素认证</span>
+              </label>
+            </div>
+            <div>
+              <label class="flex items-center">
+                <input type="checkbox" id="loginNotifications" class="rounded border-gray-300 text-primary focus:ring-primary" checked>
+                <span class="ml-2 text-sm text-gray-700">登录通知</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button onclick="saveSecuritySettings()" class="btn-primary">
+          <i class="fas fa-save mr-2"></i>保存设置
+        </button>
+      </div>
+    </div>
+
+    <!-- 数据库配置 -->
+    <div id="databaseContent" class="tab-content hidden">
+      <div class="grid grid-cols-1 gap-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">Supabase 配置</h3>
+          </div>
+          <div class="card-body space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">项目 URL</label>
+              <input type="url" id="supabaseUrl" class="form-input w-full p-2 rounded-lg" placeholder="https://your-project.supabase.co">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Anon Key</label>
+              <input type="password" id="supabaseKey" class="form-input w-full p-2 rounded-lg" placeholder="您的 Supabase anon key">
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div class="flex">
+                <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
+                <div>
+                  <h4 class="text-sm font-medium text-yellow-800">安全提醒</h4>
+                  <p class="text-sm text-yellow-700 mt-1">
+                    请妥善保管您的数据库配置信息。建议在生产环境中使用环境变量来存储这些敏感信息。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="text-lg font-semibold text-gray-900">数据库操作</h3>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button onclick="testDatabaseConnection()" class="btn-secondary">
+                <i class="fas fa-plug mr-2"></i>测试连接
+              </button>
+              <button onclick="backupDatabase()" class="btn-secondary">
+                <i class="fas fa-download mr-2"></i>备份数据
+              </button>
+            </div>
+            
+            <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+              <h4 class="text-sm font-medium text-gray-700 mb-2">连接状态</h4>
+              <div id="connectionStatus" class="text-sm text-gray-600">
+                <i class="fas fa-circle text-gray-400 mr-2"></i>未连接
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button onclick="saveDatabaseSettings()" class="btn-primary">
+          <i class="fas fa-save mr-2"></i>保存配置
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="supabase.js"></script>
+  <script>
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+      // 检查用户登录状态
+      if (!AuthService.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // 设置用户信息
+      const user = AuthService.getCurrentUser();
+      if (user) {
+        document.getElementById('userName').textContent = user.email || '管理员';
+      }
+      
+      // 初始化标签页
+      showTab('general');
+      
+      // 加载保存的设置
+      loadSettings();
+    });
+    
+    // 显示标签页内容
+    function showTab(tabName) {
+      // 隐藏所有内容
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      
+      // 重置所有标签按钮样式
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-primary', 'text-primary');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      
+      // 显示选中的内容
+      document.getElementById(tabName + 'Content').classList.remove('hidden');
+      
+      // 设置选中的标签按钮样式
+      document.getElementById(tabName + 'Tab').classList.add('border-primary', 'text-primary');
+      document.getElementById(tabName + 'Tab').classList.remove('border-transparent', 'text-gray-500');
+    }
+    
+    // 加载保存的设置
+    function loadSettings() {
+      // 从localStorage加载设置
+      const settings = JSON.parse(localStorage.getItem('platformSettings') || '{}');
+      
+      // 常规设置
+      if (settings.general) {
+        document.getElementById('platformName').value = settings.general.platformName || '医疗平台';
+        document.getElementById('platformDescription').value = settings.general.platformDescription || '专业的医疗服务平台';
+        document.getElementById('platformPhone').value = settings.general.platformPhone || '400-123-4567';
+        document.getElementById('darkMode').checked = settings.general.darkMode || false;
+        document.getElementById('defaultLanguage').value = settings.general.defaultLanguage || 'zh-CN';
+        document.getElementById('timezone').value = settings.general.timezone || 'Asia/Shanghai';
+      }
+      
+      // 安全设置
+      if (settings.security) {
+        document.getElementById('minPasswordLength').value = settings.security.minPasswordLength || 8;
+        document.getElementById('requireUppercase').checked = settings.security.requireUppercase !== false;
+        document.getElementById('requireNumbers').checked = settings.security.requireNumbers !== false;
+        document.getElementById('requireSpecialChars').checked = settings.security.requireSpecialChars || false;
+        document.getElementById('sessionTimeout').value = settings.security.sessionTimeout || 30;
+        document.getElementById('enable2FA').checked = settings.security.enable2FA || false;
+        document.getElementById('loginNotifications').checked = settings.security.loginNotifications !== false;
+      }
+      
+      // 数据库配置
+      if (settings.database) {
+        document.getElementById('supabaseUrl').value = settings.database.supabaseUrl || '';
+        document.getElementById('supabaseKey').value = settings.database.supabaseKey || '';
+      }
+    }
+    
+    // 保存常规设置
+    function saveGeneralSettings() {
+      const settings = JSON.parse(localStorage.getItem('platformSettings') || '{}');
+      
+      settings.general = {
+        platformName: document.getElementById('platformName').value,
+        platformDescription: document.getElementById('platformDescription').value,
+        platformPhone: document.getElementById('platformPhone').value,
+        darkMode: document.getElementById('darkMode').checked,
+        defaultLanguage: document.getElementById('defaultLanguage').value,
+        timezone: document.getElementById('timezone').value
+      };
+      
+      localStorage.setItem('platformSettings', JSON.stringify(settings));
+      Utils.showMessage('常规设置已保存', 'success');
+    }
+    
+    // 保存安全设置
+    function saveSecuritySettings() {
+      const settings = JSON.parse(localStorage.getItem('platformSettings') || '{}');
+      
+      settings.security = {
+        minPasswordLength: parseInt(document.getElementById('minPasswordLength').value),
+        requireUppercase: document.getElementById('requireUppercase').checked,
+        requireNumbers: document.getElementById('requireNumbers').checked,
+        requireSpecialChars: document.getElementById('requireSpecialChars').checked,
+        sessionTimeout: parseInt(document.getElementById('sessionTimeout').value),
+        enable2FA: document.getElementById('enable2FA').checked,
+        loginNotifications: document.getElementById('loginNotifications').checked
+      };
+      
+      localStorage.setItem('platformSettings', JSON.stringify(settings));
+      Utils.showMessage('安全设置已保存', 'success');
+    }
+    
+    // 保存数据库配置
+    function saveDatabaseSettings() {
+      const settings = JSON.parse(localStorage.getItem('platformSettings') || '{}');
+      
+      settings.database = {
+        supabaseUrl: document.getElementById('supabaseUrl').value,
+        supabaseKey: document.getElementById('supabaseKey').value
+      };
+      
+      localStorage.setItem('platformSettings', JSON.stringify(settings));
+      Utils.showMessage('数据库配置已保存', 'success');
+    }
+    
+    // 测试数据库连接
+    async function testDatabaseConnection() {
+      const statusEl = document.getElementById('connectionStatus');
+      const url = document.getElementById('supabaseUrl').value;
+      const key = document.getElementById('supabaseKey').value;
+      
+      if (!url || !key) {
+        statusEl.innerHTML = '<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>请先填写数据库配置';
+        return;
+      }
+      
+      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 mr-2"></i>测试连接中...';
+      
+      try {
+        // 创建临时Supabase客户端进行测试
+        const testSupabase = window.supabase.createClient(url, key);
+        
+        // 尝试获取用户列表（简单的测试查询）
+        const { error } = await testSupabase.auth.getUser();
+        
+        if (error) {
+          statusEl.innerHTML = `<i class="fas fa-times text-red-500 mr-2"></i>连接失败: ${error.message}`;
+        } else {
+          statusEl.innerHTML = '<i class="fas fa-check text-green-500 mr-2"></i>连接成功';
+        }
+      } catch (error) {
+        statusEl.innerHTML = `<i class="fas fa-times text-red-500 mr-2"></i>连接失败: ${error.message}`;
+      }
+    }
+    
+    // 备份数据库
+    function backupDatabase() {
+      Utils.showMessage('数据库备份功能正在开发中', 'info');
+    }
+    
+    // 用户登出
+    async function logout() {
+      const result = await AuthService.logout();
+      if (result.success) {
+        window.location.href = 'login.html';
+      }
+    }
+  </script>
+
+  <style>
+    .tab-btn {
+      transition: all 0.2s ease;
+    }
+    
+    .tab-btn:hover {
+      color: #4F46E5;
+    }
+    
+    .tab-content {
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</body>
+</html>

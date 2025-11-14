@@ -1,0 +1,14 @@
+{"level":30,"time":1762742920588,"pid":10656,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762742920589,"pid":10656,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1762754260446,"pid":30036,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762754260446,"pid":30036,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1762757662200,"pid":17200,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762757662201,"pid":17200,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1762819782021,"pid":23496,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762819782021,"pid":23496,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1762827883966,"pid":17768,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762827883966,"pid":17768,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1762840926053,"pid":28312,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1762840926055,"pid":28312,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}
+{"level":30,"time":1763108821942,"pid":27208,"hostname":"LAPTOP-P0GCGIIH","msg":"config>{\"host\":\"localhost\",\"user\":\"root@localhost\",\"password\":\"******\",\"database\":\"localhost_3306_1\",\"port\":3306}"}
+{"level":30,"time":1763108821942,"pid":27208,"hostname":"LAPTOP-P0GCGIIH","msg":"MySQL MCP server running on stdio"}

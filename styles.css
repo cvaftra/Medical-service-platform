@@ -1,0 +1,154 @@
+/* 共享样式 - 保持与login.html一致的风格 */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 1024px;
+  background-color: #F9FAFB;
+  margin: 0;
+  padding: 0;
+}
+
+.font-logo {
+  font-family: 'Pacifico', serif;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.social-btn {
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.form-input {
+  border: 1px solid #D1D5DB;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  transition: all 0.3s ease;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+}
+
+.btn-secondary {
+  background: #F3F4F6;
+  transition: all 0.3s ease;
+  color: #374151;
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #E5E7EB;
+  transform: translateY(-1px);
+}
+
+/* 导航栏样式 */
+.navbar {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 0 2rem;
+}
+
+.navbar-brand {
+  font-family: 'Pacifico', serif;
+  font-size: 1.5rem;
+  color: #4F46E5;
+}
+
+.nav-link {
+  color: #6B7280;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #4F46E5;
+  background: rgba(79, 70, 229, 0.1);
+}
+
+/* 卡片样式 */
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #F3F4F6;
+}
+
+.card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* 表格样式 */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.table th {
+  background: #F9FAFB;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 响应式布局 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  
+  .navbar {
+    padding: 0 1rem;
+  }
+}

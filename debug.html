@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库调试页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .status-success { color: #10B981; }
+        .status-error { color: #EF4444; }
+        .status-warning { color: #F59E0B; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Supabase数据库连接调试</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">连接状态测试</h2>
+            <div class="space-y-4">
+                <button onclick="testConnection()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    测试数据库连接
+                </button>
+                <div id="connectionResult" class="mt-2 p-4 rounded border"></div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">模拟注册流程测试</h2>
+            <div class="space-y-4">
+                <button onclick="testRegistration()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    模拟用户注册
+                </button>
+                <div id="registrationResult" class="mt-2 p-4 rounded border"></div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">当前数据库表状态</h2>
+            <div class="space-y-4">
+                <button onclick="getUsers()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    获取用户列表
+                </button>
+                <div id="usersResult" class="mt-2 p-4 rounded border max-h-64 overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.innerHTML = '<p class="text-gray-600">测试中...</p>';
+            
+            try {
+                const result = await AuthService.testDatabaseConnection();
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <p class="status-success">✅ ${result.message}</p>
+                        <p class="text-sm text-gray-600 mt-2">数据库连接正常，可以保存用户数据。</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="status-error">❌ 连接失败: ${result.error}</p>
+                        <p class="text-sm text-gray-600 mt-2">请检查数据库配置和表结构。</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="status-error">❌ 测试异常: ${error.message}</p>
+                    <p class="text-sm text-gray-600 mt-2">请检查控制台获取详细信息。</p>
+                `;
+                console.error('连接测试异常:', error);
+            }
+        }
+
+        async function testRegistration() {
+            const resultDiv = document.getElementById('registrationResult');
+            resultDiv.innerHTML = '<p class="text-gray-600">模拟注册中...</p>';
+            
+            try {
+                // 模拟用户数据
+                const testUser = {
+                    fullname: '测试用户_' + Date.now(),
+                    phone: '13800138000'
+                };
+                
+                const result = await AuthService.register(
+                    'test' + Date.now() + '@example.com',
+                    'TestPassword123!',
+                    testUser
+                );
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <p class="status-success">✅ 注册成功！</p>
+                        <p class="text-sm text-gray-600 mt-2">用户ID: ${result.user?.id}</p>
+                        <p class="text-sm text-gray-600">认证状态: ${result.session ? '已自动登录' : '未自动登录'}</p>
+                    `;
+                } else if (result.authSuccess && result.profileError) {
+                    resultDiv.innerHTML = `
+                        <p class="status-warning">⚠️ 认证成功但数据库保存失败</p>
+                        <p class="text-sm text-gray-600 mt-2">错误信息: ${result.error}</p>
+                        <p class="text-sm text-gray-600">请检查数据库权限和表结构。</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="status-error">❌ 注册失败: ${result.error}</p>
+                        <p class="text-sm text-gray-600 mt-2">请检查认证配置。</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="status-error">❌ 注册异常: ${error.message}</p>
+                    <p class="text-sm text-gray-600 mt-2">请检查控制台获取详细信息。</p>
+                `;
+                console.error('注册测试异常:', error);
+            }
+        }
+
+        async function getUsers() {
+            const resultDiv = document.getElementById('usersResult');
+            resultDiv.innerHTML = '<p class="text-gray-600">获取用户列表中...</p>';
+            
+            try {
+                const result = await DataService.getUsers();
+                if (result.success) {
+                    if (result.data && result.data.length > 0) {
+                        const usersHtml = result.data.map(user => `
+                            <div class="border-b pb-2 mb-2">
+                                <p><strong>ID:</strong> ${user.id}</p>
+                                <p><strong>邮箱:</strong> ${user.email}</p>
+                                <p><strong>姓名:</strong> ${user.full_name}</p>
+                                <p><strong>手机:</strong> ${user.phone}</p>
+                                <p><strong>状态:</strong> ${user.status}</p>
+                                <p><strong>创建时间:</strong> ${new Date(user.created_at).toLocaleString()}</p>
+                            </div>
+                        `).join('');
+                        
+                        resultDiv.innerHTML = `
+                            <p class="status-success">✅ 找到 ${result.data.length} 个用户</p>
+                            ${usersHtml}
+                        `;
+                    } else {
+                        resultDiv.innerHTML = '<p class="status-warning">⚠️ 用户表为空</p>';
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="status-error">❌ 获取用户列表失败: ${result.error}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="status-error">❌ 获取用户异常: ${error.message}</p>
+                `;
+                console.error('获取用户异常:', error);
+            }
+        }
+
+        // 页面加载时自动测试连接
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('调试页面已加载，可以开始测试数据库连接');
+        });
+    </script>
+</body>
+</html>
