@@ -2,7 +2,39 @@
   publish = "."
   command = "echo 'No build command needed for static site'"
 
+# 使用简单的重定向而不是SPA路由
+[[redirects]]
+  from = "/"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/register"
+  to = "/register.html"
+  status = 200
+
+[[redirects]]
+  from = "/register/*"
+  to = "/register.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/users"
+  to = "/users.html"
+  status = 200
+
+[[redirects]]
+  from = "/settings"
+  to = "/settings.html"
+  status = 200
+
+# 其他所有路径显示404
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
+  status = 404

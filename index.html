@@ -4,31 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>医疗平台管理系统</title>
-    <script>
-        // 根据当前路径决定重定向目标
-        const currentPath = window.location.pathname;
-        
-        // 如果是注册页面路径，保持当前页面
-        if (currentPath.includes('register.html')) {
-            // 不进行重定向，让注册页面正常显示
-            console.log('访问注册页面，保持原页面');
-        } else {
-            // 其他情况重定向到登录页面
-            window.location.href = '/login.html';
-        }
-    </script>
+    <meta http-equiv="refresh" content="0; url=/login.html">
 </head>
 <body>
-    <p id="redirect-message">页面跳转中...</p>
-    <script>
-        // 如果是注册页面，修改显示内容
-        if (window.location.pathname.includes('register.html')) {
-            document.getElementById('redirect-message').textContent = '加载注册页面...';
-            // 延迟跳转到实际的注册页面，避免SPA路由问题
-            setTimeout(() => {
-                window.location.href = '/register.html';
-            }, 100);
-        }
-    </script>
+    <div style="text-align: center; margin-top: 100px; font-family: Arial, sans-serif;">
+        <h2>医疗平台管理系统</h2>
+        <p>正在跳转到登录页面...</p>
+        <p><small>如果页面没有自动跳转，请 <a href="/login.html">点击这里</a></small></p>
+    </div>
 </body>
 </html>

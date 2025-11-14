@@ -35,8 +35,9 @@ function checkAuth() {
 function initializePage() {
     const currentPage = window.location.pathname.split('/').pop();
     
-    // 对于注册页面，不进行认证检查
+    // 对于注册页面，不进行认证检查（双重保护）
     if (currentPage === 'register.html') {
+        console.log('注册页面，跳过认证检查');
         return;
     }
     
@@ -278,6 +279,24 @@ async function loadStatistics() {
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    // 对于注册页面，完全跳过认证检查和初始化
+    if (currentPage === 'register.html') {
+        console.log('注册页面 - 跳过所有认证检查');
+        
+        // 只绑定注册表单事件
+        const registerForm = document.getElementById('registerForm');
+        if (registerForm) {
+            console.log('注册页面 - 绑定注册表单事件');
+            registerForm.addEventListener('submit', handleRegister);
+        }
+        
+        // 注册页面不执行任何其他初始化逻辑
+        return;
+    }
+    
+    // 其他页面正常初始化
     initializePage();
     
     // 如果是控制台页面，加载统计数据
